@@ -1,48 +1,49 @@
-zeppelin:
-  image: xemuliam/zeppelin
-  container_name: zeppelin
-  environment:
-    ZEPPELIN_PORT: 8080
-    ZEPPELIN_JAVA_OPTS: >-
-      -Dspark.driver.memory=1g
-      -Dspark.executor.memory=2g
-    SPARK_SUBMIT_OPTIONS: >-
-      --conf spark.driver.host=localhost
-      --conf spark.driver.port=8081
-      --conf spark.es.port=9200
-      --packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11
-      --conf spark.cassandra.connection.host=cassandra
-      --conf cassandra.hosts=cassandra
-    MASTER: local[*]
-  links:
-    - cassandra:cassandra
-  ports:
-    - 8080:8080
-    - 8081:8081
-    - 4040:4040
-  volumes:
-    - ./znotebooks:/usr/zeppelin/notebook
-  deploy:
-    resources:
-      limits:
-        memory: 4000M
-      reservations:
-        memory: 2000M
+version: "3"
+services:
 
-cassandra:
-  image: cassandra:3.9
-  container_name: cassandra
-  ports:
-    - 7000:7000
-    - 7001:7001
-    - 9042:9042
-    - 9160:9160
-    - 7199:7199
-  volumes:
-    - ./cdata:/var/lib/cassandra
-  deploy:
-    resources:
-      limits:
-        memory: 6000M
-      reservations:
-        memory: 2000M
+  zeppelin:
+    image: xemuliam/zeppelin
+    container_name: zeppelin
+    environment:
+      ZEPPELIN_PORT: 8080
+      ZEPPELIN_JAVA_OPTS: >-
+        -Dspark.driver.memory=1g
+        -Dspark.executor.memory=2g
+      SPARK_SUBMIT_OPTIONS: >-
+        --conf spark.driver.host=localhost
+        --conf spark.driver.port=8081
+        --conf spark.es.port=9200
+        --packages datastax:spark-cassandra-connector:2.0.0-M2-s_2.11
+        --conf spark.cassandra.connection.host=cassandra
+        --conf cassandra.hosts=cassandra
+      MASTER: local[*]
+    ports:
+      - 8080:8080
+      - 8081:8081
+      - 4040:4040
+    volumes:
+      - ./znotebooks:/usr/zeppelin/notebook
+    deploy:
+      resources:
+        limits:
+          memory: 4000M
+        reservations:
+          memory: 2000M
+
+  cassandra:
+    image: cassandra:3.9
+    container_name: cassandra
+    ports:
+      - 7000:7000
+      - 7001:7001
+      - 9042:9042
+      - 9160:9160
+      - 7199:7199
+    volumes:
+      - ./cdata:/var/lib/cassandra
+    deploy:
+      resources:
+        limits:
+          memory: 6000M
+        reservations:
+          memory: 2000M
